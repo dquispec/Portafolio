@@ -65,6 +65,41 @@ document.querySelectorAll(
   observer.observe(el);
 });
 
+// Dashboard counter animation
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target);
+  let count = 0;
+  const step = Math.ceil(target / 30);
+  const timer = setInterval(() => {
+    count = Math.min(count + step, target);
+    el.textContent = count;
+    if (count >= target) clearInterval(timer);
+  }, 40);
+}
+
+// Dashboard bars animation
+function animateBars() {
+  document.querySelectorAll(".bar-fill").forEach((bar) => {
+    bar.style.width = bar.dataset.width + "%";
+  });
+}
+
+// Trigger dashboard animations when hero is visible
+const dashCard = document.querySelector(".dashboard-card");
+if (dashCard) {
+  const dashObserver = new IntersectionObserver(
+    (entries) => {
+      if (entries[0].isIntersecting) {
+        document.querySelectorAll(".metric-value").forEach(animateCounter);
+        setTimeout(animateBars, 300);
+        dashObserver.disconnect();
+      }
+    },
+    { threshold: 0.3 }
+  );
+  dashObserver.observe(dashCard);
+}
+
 // Smooth active nav link highlight
 const sections = document.querySelectorAll("section[id]");
 const navLinks = document.querySelectorAll(".nav-links a");
